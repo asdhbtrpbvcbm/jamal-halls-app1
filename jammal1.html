@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>قاعات الجمال</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#ff6b6b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="قاعات الجمال">
+    <meta name="description" content="نظام إدارة حجوزات قاعات الجمال">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            direction: rtl;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .mobile-app {
+            width: 100%;
+            height: 100vh;
+            background: white;
+            position: relative;
+        }
+
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            padding: 15px 20px;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        /* Stats Dashboard */
+        .stats-section {
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .financial-summary {
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .financial-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .financial-row.total {
+            font-weight: bold;
+            font-size: 1em;
+            border-top: 1px solid #eee;
+            padding-top: 8px;
+            margin-top: 10px;
+        }
+
+        /* Search and Controls */
+        .controls-section {
+            padding: 15px;
+            background: white;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 1.1em;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        /* Bookings List */
+        .bookings-section {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 15px 80px 15px;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border-right: 4px solid #667eea;
+        }
+
+        .booking-header {
+            padding: 15px;
+            background: #f8f9fb;
+            border-bottom: 1px solid #eee;
+        }
+
+        .booking-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .booking-date {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .booking-details {
+            padding: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .detail-label {
+            color: #666;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .hall-type {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .hall-men { background: #e3f2fd; color: #1976d2; }
+        .hall-women { background: #fce4ec; color: #c2185b; }
+        .hall-both { background: #e8f5e8; color: #388e3c; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .status-confirmed { background: #e8f5e8; color: #2e7d32; }
+        .status-pending { background: #fff3e0; color: #f57c00; }
+        .status-cancelled { background: #ffebee; color: #d32f2f; }
+
+        .booking-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-edit {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: #667eea;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+            outline: none;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            outline: none;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .currency {
+            color: #2e7d32;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            
+            .stat-card {
+                padding: 12px;
+            }
+            
+            .stat-number {
+                font-size: 1.4em;
+            }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            left: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transform: translateY(-100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1001;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification.success {
+            background: #4caf50;
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        .notification.warning {
+            background: #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-app">
+        <!-- Header -->
+        <div class="app-header">
+            <div class="header-content">
+                <h1 class="app-title">🏛️ قاعات الجمال</h1>
+                <button class="menu-btn" onclick="showMenu()">☰</button>
+            </div>
+        </div>
+
+        <!-- Stats Dashboard -->
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalBookings">0</div>
+                    <div class="stat-label">إجمالي الحجوزات</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="todayBookings">0</div>
+                    <div class="stat-label">حجوزات اليوم</div>
+                </div>
+            </div>
+            <div class="financial-summary">
+                <div class="financial-row">
+                    <span>المبلغ الإجمالي:</span>
+                    <span class="currency" id="totalAmount">0 ₪</span>
+                </div>
+                <div class="financial-row">
+                    <span>المدفوع:</span>
+                    <span class="currency" id="paidAmount">0 ₪</span>
+                </div>
+                <div class="financial-row total">
+                    <span>المتبقي:</span>
+                    <span class="currency" id="remainingAmount">0 ₪</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-section">
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="البحث باسم العميل...">
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="showAddBooking()">➕ حجز جديد</button>
+                <button class="btn btn-secondary" onclick="exportData()">📊 تصدير</button>
+            </div>
+        </div>
+
+        <!-- Bookings List -->
+        <div class="bookings-section" id="bookingsList">
+            <div class="empty-state">
+                <div class="empty-icon">📅</div>
+                <h3>لا توجد حجوزات</h3>
+                <p>ابدأ بإضافة حجز جديد</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Booking Modal -->
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">حجز جديد</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label class="form-label">اسم العميل *</label>
+                        <input type="text" class="form-input" id="clientName" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">تاريخ الحجز *</label>
+                            <input type="date" class="form-input" id="bookingDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">الوقت</label>
+                            <input type="time" class="form-input" id="bookingTime">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">نوع القاعة *</label>
+                        <select class="form-select" id="hallType" required>
+                            <option value="">اختر نوع القاعة</option>
+                            <option value="men">قاعة الرجال</option>
+                            <option value="women">قاعة النساء</option>
+                            <option value="both">القاعتان معاً</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">إجمالي المبلغ (₪) *</label>
+                            <input type="number" class="form-input" id="totalAmountInput" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">المبلغ المدفوع (₪)</label>
+                            <input type="number" class="form-input" id="paidAmountInput" min="0" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">حالة الحجز</label>
+                        <select class="form-select" id="bookingStatus">
+                            <option value="confirmed">مؤكد</option>
+                            <option value="pending">في الانتظار</option>
+                            <option value="cancelled">ملغي</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات</label>
+                        <textarea class="form-textarea" id="notes" placeholder="أي ملاحظات إضافية..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">إلغاء</button>
+                <button class="btn btn-primary" onclick="saveBooking()">حفظ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        let bookings = [];
+        let editingId = null;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBookings();
+            updateStats();
+            renderBookings();
+            
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                filterBookings(e.target.value);
+            });
+            
+            // Auto-calculate remaining amount
+            document.getElementById('totalAmountInput').addEventListener('input', calculateRemaining);
+            document.getElementById('paidAmountInput').addEventListener('input', calculateRemaining);
+        });
+
+        function calculateRemaining() {
+            const total = parseFloat(document.getElementById('totalAmountInput').value) || 0;
+            const paid = parseFloat(document.getElementById('paidAmountInput').value) || 0;
+            // Just for form validation, not displayed
+        }
+
+        function loadBookings() {
+            // Sample data - in real app, load from localStorage or API
+            bookings = [
+                {
+                    id: 1,
+                    clientName: "أحمد محمد",
+                    date: "2024-12-15",
+                    time: "18:00",
+                    hallType: "both",
+                    totalAmount: 5000,
+                    paidAmount: 2000,
+                    status: "confirmed",
+                    notes: "حفل زفاف"
+                },
+                {
+                    id: 2,
+                    clientName: "فاطمة علي",
+                    date: "2024-12-20",
+                    time: "16:00",
+                    hallType: "women",
+                    totalAmount: 3000,
+                    paidAmount: 3000,
+                    status: "confirmed",
+                    notes: "حفل خطوبة"
+                },
+                {
+                    id: 3,
+                    clientName: "سارة أحمد",
+                    date: "2024-12-25",
+                    time: "19:00",
+                    hallType: "men",
+                    totalAmount: 4000,
+                    paidAmount: 1500,
+                    status: "pending",
+                    notes: ""
+                }
+            ];
+        }
+
+        function saveBookings() {
+            // In real app, save to localStorage or send to API
+            // localStorage.setItem('bookings', JSON.stringify(bookings));
+        }
+
+        function updateStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayBookings = bookings.filter(b => b.date === today);
+            
+            const totalAmount = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+            const paidAmount = bookings.reduce((sum, b) => sum + (b.paidAmount || 0), 0);
+            const remainingAmount = totalAmount - paidAmount;
+
+            document.getElementById('totalBookings').textContent = bookings.length;
+            document.getElementById('todayBookings').textContent = todayBookings.length;
+            document.getElementById('totalAmount').textContent = totalAmount.toLocaleString() + ' ₪';
+            document.getElementById('paidAmount').textContent = paidAmount.toLocaleString() + ' ₪';
+            document.getElementById('remainingAmount').textContent = remainingAmount.toLocaleString() + ' ₪';
+        }
+
+        function renderBookings(filteredBookings = null) {
+            const bookingsToRender = filteredBookings || bookings;
+            const container = document.getElementById('bookingsList');
+            
+            if (bookingsToRender.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📅</div>
+                        <h3>لا توجد حجوزات</h3>
+                        <p>ابدأ بإضافة حجز جديد</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = bookingsToRender.map(booking => `
+                <div class="booking-card">
+                    <div class="booking-header">
+                        <div class="booking-title">${booking.clientName}</div>
+                        <div class="booking-date">${formatDate(booking.date)}${booking.time ? ' - ' + booking.time : ''}</div>
+                    </div>
+                    <div class="booking-details">
+                        <div class="detail-row">
+                            <span class="detail-label">نوع القاعة:</span>
+                            <span class="hall-type ${getHallClass(booking.hallType)}">${getHallText(booking.hallType)}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">إجمالي المبلغ:</span>
+                            <span class="detail-value currency">${booking.totalAmount?.toLocaleString() || 0} ₪</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">المدفوع:</span>
+                            <span class="detail-value currency">${booking.paidAmount?.toLocaleString() || 0} ₪</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">المتبقي:</span>
+                            <span class="detail-value currency">${((booking.totalAmount || 0) - (booking.paidAmount || 0)).toLocaleString()} ₪</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">الحالة:</span>
+                            <span class="status-badge ${getStatusClass(booking.status)}">${getStatusText(booking.status)}</span>
+                        </div>
+                        ${booking.notes ? `
+                        <div class="detail-row">
+                            <span class="detail-label">ملاحظات:</span>
+                            <span class="detail-value">${booking.notes}</span>
+                        </div>
+                        ` : ''}
+                        <div class="booking-actions">
+                            <button class="action-btn btn-edit" onclick="editBooking(${booking.id})">✏️ تعديل</button>
+                            <button class="action-btn btn-delete" onclick="deleteBooking(${booking.id})">🗑️ حذف</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('ar-SA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function getHallClass(type) {
+            const classes = {
+                'men': 'hall-men',
+                'women': 'hall-women',
+                'both': 'hall-both'
+            };
+            return classes[type] || '';
+        }
+
+        function getHallText(type) {
+            const texts = {
+                'men': 'قاعة الرجال',
+                'women': 'قاعة النساء',
+                'both': 'القاعتان معاً'
+            };
+            return texts[type] || '';
+        }
+
+        function getStatusClass(status) {
+            const classes = {
+                'confirmed': 'status-confirmed',
+                'pending': 'status-pending',
+                'cancelled': 'status-cancelled'
+            };
+            return classes[status] || '';
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                'confirmed': 'مؤكد',
+                'pending': 'في الانتظار',
+                'cancelled': 'ملغي'
+            };
+            return texts[status] || '';
+        }
+
+        function filterBookings(searchTerm) {
+            const filtered = bookings.filter(booking => 
+                booking.clientName.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            renderBookings(filtered);
+        }
+
+        function showAddBooking() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'حجز جديد';
+            document.getElementById('bookingForm').reset();
+            initializeDateInput();
+            document.getElementById('bookingModal').style.display = 'block';
+        }
+
+        function editBooking(id) {
+            const booking = bookings.find(b => b.id === id);
+            if (!booking) return;
+
+            editingId = id;
+            document.getElementById('modalTitle').textContent = 'تعديل الحجز';
+            
+            // Fill form with booking data
+            document.getElementById('clientName').value = booking.clientName || '';
+            document.getElementById('bookingDate').value = booking.date || '';
+            document.getElementById('bookingTime').value = booking.time || '';
+            document.getElementById('hallType').value = booking.hallType || '';
+            document.getElementById('totalAmountInput').value = booking.totalAmount || '';
+            document.getElementById('paidAmountInput').value = booking.paidAmount || '';
+            document.getElementById('bookingStatus').value = booking.status || 'confirmed';
+            document.getElementById('notes').value = booking.notes || '';
+            
+            document.getElementById('bookingModal').style.display = 'block';
+        }
+
+        function deleteBooking(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الحجز؟')) {
+                bookings = bookings.filter(b => b.id !== id);
+                saveBookings();
+                updateStats();
+                renderBookings();
+                showNotification('تم حذف الحجز بنجاح', 'success');
+            }
+        }
+
+        function saveBooking() {
+            const form = document.getElementById('bookingForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const bookingData = {
+                clientName: document.getElementById('clientName').value,
+                date: document.getElementById('bookingDate').value,
+                time: document.getElementById('bookingTime').value,
+                hallType: document.getElementById('hallType').value,
+                totalAmount: parseFloat(document.getElementById('totalAmountInput').value) || 0,
+                paidAmount: parseFloat(document.getElementById('paidAmountInput').value) || 0,
+                status: document.getElementById('bookingStatus').value,
+                notes: document.getElementById('notes').value
+            };
+
+            if (editingId) {
+                // Update existing booking
+                const index = bookings.findIndex(b => b.id === editingId);
+                bookings[index] = { ...bookings[index], ...bookingData };
+                showNotification('تم تحديث الحجز بنجاح', 'success');
+            } else {
+                // Add new booking
+                const newId = Math.max(0, ...bookings.map(b => b.id)) + 1;
+                bookings.push({ id: newId, ...bookingData });
+                showNotification('تم إضافة الحجز بنجاح', 'success');
+            }
+
+            saveBookings();
+            updateStats();
+            renderBookings();
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+            editingId = null;
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function exportData() {
+            const csvContent = generateCSV();
+            downloadCSV(csvContent, 'قاعات-الجمال-تصدير.csv');
+            showNotification('تم تصدير البيانات بنجاح', 'success');
+        }
+
+        function generateCSV() {
+            const headers = ['اسم العميل', 'التاريخ', 'الوقت', 'نوع القاعة', 'إجمالي المبلغ', 'المدفوع', 'المتبقي', 'الحالة', 'ملاحظات'];
+            const rows = bookings.map(booking => [
+                booking.clientName,
+                booking.date,
+                booking.time || '',
+                getHallText(booking.hallType),
+                booking.totalAmount || 0,
+                booking.paidAmount || 0,
+                (booking.totalAmount || 0) - (booking.paidAmount || 0),
+                getStatusText(booking.status),
+                booking.notes || ''
+            ]);
+            
+            return [headers, ...rows].map(row => row.join(',')).join('\n');
+        }
+
+        function downloadCSV(csvContent, filename) {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        function showMenu() {
+            const menuOptions = [
+                '⚙️ إعدادات التطبيق',
+                '💾 نسخ احتياطي للبيانات', 
+                '📊 تقارير مفصلة',
+                '🔔 إعدادات الإشعارات',
+                '📞 تواصل معنا',
+                'ℹ️ حول التطبيق'
+            ];
+            alert('قائمة الإعدادات:\n\n' + menuOptions.join('\n'));
+        }
+
+        // Initialize date input with today's date for new bookings
+        function initializeDateInput() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('bookingDate').value = today;
+        }
+
+        // Touch gestures for mobile
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        document.addEventListener('touchstart', function(event) {
+            touchStartY = event.changedTouches[0].screenY;
+        });
+
+        document.addEventListener('touchend', function(event) {
+            touchEndY = event.changedTouches[0].screenY;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeDistance = touchStartY - touchEndY;
+            if (Math.abs(swipeDistance) > 50) {
+                if (swipeDistance > 0) {
+                    // Swipe up - refresh data
+                    updateStats();
+                    renderBookings();
+                    showNotification('تم تحديث البيانات', 'success');
+                } else {
+                    // Swipe down - could add functionality
+                }
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('bookingModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Prevent zoom on input focus (mobile)
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        });
+
+        // Auto-hide notification on tap
+        document.getElementById('notification').addEventListener('click', function() {
+            this.classList.remove('show');
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Ctrl/Cmd + N for new booking
+            if ((event.ctrlKey || event.metaKey) && event.key === 'n') {
+                event.preventDefault();
+                showAddBooking();
+            }
+            
+            // Escape to close modal
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Service Worker for offline support (optional)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // Register service worker for offline support
+                // This would require a separate service worker file
+            });
+        }
+
+        // Auto-save functionality (saves data every 30 seconds)
+        setInterval(function() {
+            if (bookings.length > 0) {
+                saveBookings();
+            }
+        }, 30000);
+
+        // Backup data to device storage periodically
+        function createBackup() {
+            const backupData = {
+                bookings: bookings,
+                timestamp: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const dataStr = JSON.stringify(backupData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `قاعات-الجمال-نسخة-احتياطية-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showNotification('تم إنشاء نسخة احتياطية بنجاح', 'success');
+        }
+
+        // Add backup button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add backup option to export button
+            const exportBtn = document.querySelector('.btn-secondary');
+            if (exportBtn) {
+                exportBtn.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    createBackup();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
